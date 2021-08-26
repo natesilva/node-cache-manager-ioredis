@@ -20,12 +20,14 @@ const redisStore = (...args) => {
 
   const storeArgs = redisCache.options;
 
+  let ttl = storeArgs.ttl;
+
   if (
     storeArgs.ttl === undefined &&
     args.length > 0 &&
     typeof args[0].ttl === 'number'
   ) {
-    storeArgs.ttl = args[0].ttl;
+    ttl = args[0].ttl;
   }
 
   let self = {
@@ -51,7 +53,7 @@ const redisStore = (...args) => {
         return cb(new Error(`"${value}" is not a cacheable value`));
       }
 
-      const ttl = (options.ttl || options.ttl === 0) ? options.ttl : storeArgs.ttl;
+      const ttl = (options.ttl || options.ttl === 0) ? options.ttl : ttl;
       const val = JSON.stringify(value) || '"undefined"';
 
       if (ttl) {
